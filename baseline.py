@@ -37,7 +37,7 @@ def getClosest(val1, idx1, val2, idx2, target):
 
 
 def system_level_prop_eval(data, req, PMC_result):
-    data_length = len(data.get((list(data.keys())[0]))[1]) - 1
+    data_length = len(data.get((list(data.keys())[0]))[2]) - 1
     result_first = evaluateExpression(PMC_result[0], Storm_evaluation_parameter_set(data, 0))
     result_last = evaluateExpression(PMC_result[0], Storm_evaluation_parameter_set(data, -1))
     small_result, large_result = compareValue(result_last, result_first)
@@ -144,7 +144,6 @@ def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, applica
             else:
                 counter = counter + data_length
                 number_of_violation += 1
-                print(counter)
         else:
             data_length, decision = system_level_prop_eval(data, req, PMC_result)
             if decision == 0:
@@ -152,6 +151,4 @@ def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, applica
             else:
                 counter = counter + data_length
                 number_of_violation += 1
-                print(counter)
-
     return number_of_violation

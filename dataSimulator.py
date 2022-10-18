@@ -54,13 +54,13 @@ def exp_data_generator(xrange, sign, high, low):
     random.seed(len(xrange))
     tau = random.randint(round(len(xrange) * 0.5), round(len(xrange)) * 2)
     if sign == "decrease":
-        random.seed(int(len(xrange)/10))
+        random.seed(int(len(xrange) / 10))
         if round(random.random()) == 0:
             return normalise_in_range(np.exp(-xrange / tau), low, high)
         else:
             return normalise_in_range(1 - np.exp(xrange / tau) / np.sum(np.exp(xrange / tau)), low, high)
     elif sign == "increase":
-        random.seed(int(len(xrange)/10))
+        random.seed(int(len(xrange) / 10))
         if round(random.random()) == 0:
             return normalise_in_range(-np.exp(-xrange / tau), low, high)
         else:
@@ -90,7 +90,7 @@ def new_data(type, noise, default_trend, data_size, max_value, min_value, counte
                                                                 data_size), trend, max_value, min_value))
         # plt.figure()
         # plt.plot(np.arange(0, y_reading_ref.size, 1, dtype=int), y_reading_ref)
-        np.random.seed(int(counter+1/100))
+        np.random.seed(int(counter + 1 / 100))
         y_reading_ref = y_reading_ref + np.random.normal(0, diff_value(min_value, max_value), y_reading_ref.shape)
         x = np.arange(0, y_reading_ref.size, 1, dtype=int)
         pfit = np.poly1d(np.polyfit(x, y_reading_ref, 5))
@@ -99,13 +99,13 @@ def new_data(type, noise, default_trend, data_size, max_value, min_value, counte
     y_reading = y_reading_ref
     a = diff_value(min_value, max_value)
     if noise == 1:
-        np.random.seed(counter/100+2)
+        np.random.seed(int(counter / 100 + 2))
         y_reading = y_reading + np.random.normal(0, a * 0.25, y_reading.shape)
     elif noise == 2:
-        np.random.seed(counter/100+3)
+        np.random.seed(int(counter / 100 + 3))
         y_reading = y_reading + np.random.normal(0, a * 0.5, y_reading.shape)
     elif noise == 3:
-        np.random.seed(counter/100+4)
+        np.random.seed(int(counter / 100 + 4))
         y_reading = y_reading + np.random.normal(0, a * 0.75, y_reading.shape)
 
     # y_reading = y_reading_ref[0:-prediction_horizon]
@@ -125,12 +125,12 @@ def data_generator(prob_parameters, rwd_parameters, application, noise_level, gl
     if application == "fruit-picking":
         for i in prob_parameters:
             # fruit picking
-            temp_couter +=1
-            random.seed(global_t/100+temp_couter)
+            temp_couter += 1
+            random.seed(global_t / 100 + temp_couter)
             data[i] = new_data("non-mono", noise=noise_level, default_trend="decrease",
                                data_size=random.randint(7200, 10080),
                                max_value=1,
-                               min_value=0.6, counter = global_t/100+temp_couter)
+                               min_value=0.6, counter=global_t / 100 + temp_couter)
             # plt.figure()
             # plt.plot(data[i][0], data[i][1], "o")
             # print(len(data.get(i)[0]))
@@ -139,22 +139,22 @@ def data_generator(prob_parameters, rwd_parameters, application, noise_level, gl
             for i in rwd_parameters:
                 temp_couter += 1
                 # fruit picking
-                random.seed(global_t/100+temp_couter)
+                random.seed(global_t / 100 + temp_couter)
                 data[i] = new_data("non-mono", noise=noise_level, default_trend="increase",
                                    data_size=random.randint(7200, 10080),
                                    max_value=10,
-                                   min_value=1, counter = global_t/100+temp_couter)
+                                   min_value=1, counter=global_t / 100 + temp_couter)
                 data_size_temp = np.vstack((data_size_temp, len(data.get(i)[0])))
         data_size_temp = np.delete(data_size_temp, 0, 0)
         datasize = np.min(data_size_temp)
     elif application == "RAD":
         for i in prob_parameters:
-            temp_couter +=1
-            random.seed(global_t/100+temp_couter)
+            temp_couter += 1
+            random.seed(global_t / 100 + temp_couter)
             data[i] = new_data("non-mono", noise=noise_level, default_trend="decrease",
                                data_size=random.randint(7200, 10080),
                                max_value=0.6,
-                               min_value=0.3, counter = global_t/100+temp_couter)
+                               min_value=0.3, counter=global_t / 100 + temp_couter)
             # plt.figure()
             # plt.plot(data[i][0], data[i][1], "o")
             # print(len(data.get(i)[0]))
@@ -162,12 +162,12 @@ def data_generator(prob_parameters, rwd_parameters, application, noise_level, gl
         if len(rwd_parameters) > 0:
             for i in rwd_parameters:
                 # RAD
-                temp_couter+=1
-                random.seed(global_t/100+temp_couter)
+                temp_couter += 1
+                random.seed(global_t / 100 + temp_couter)
                 data[i] = new_data("non-mono", noise=noise_level, default_trend="increase",
                                    data_size=random.randint(7200, 10080),
                                    max_value=10,
-                                   min_value=1, counter = global_t/100+temp_couter)
+                                   min_value=1, counter=global_t / 100 + temp_couter)
                 # plt.figure()
                 # plt.plot(data[i][0], data[i][1], "o")
                 # print(len(data.get(i)[0]))

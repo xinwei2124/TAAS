@@ -33,12 +33,15 @@ if __name__ == '__main__':
     psi_threshold = 500
     trigger_value = psi_threshold
 
+    pmc_result = dict()
+
+
     # pmc_exp, pmc_param_all, pmc_param_prob, pmc_param_reward = parametric_model_checking(model_path, prop)
     pmc_result = parametric_model_checking(model_path, prop)
     # data = data_generator(pmc_result[2], pmc_result[3], "RAD", 1)
 
     TP, FN, FP = PRESTOSimulation(43200, prediction_horizon, Updating_N, Line_fit_data_size, Epsilon, pmc_result,
-                     application, 0, requirement, psi_threshold, trigger_value)
+                     application, noise, requirement, psi_threshold, trigger_value)
     print(TP, FN, FP)
 
     number_of_maintenance = 1

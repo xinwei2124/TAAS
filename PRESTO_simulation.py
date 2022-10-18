@@ -130,6 +130,7 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
             data_length = data_length + counter
 
             if t < counter:
+                print(counter)
                 FN += 1
                 counter = data_length
             elif t - idx - counter < trigger_value:
@@ -148,24 +149,38 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
                     param_idx[i] = 0
                 data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
-
         else:
-            counter += datasize
+            t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
+                                                 req) + counter - Line_fit_data_size
+            data_length, decision = system_level_prop_eval(data, req, PMC_result)
+            data_length = data_length + counter
+            if decision == 0:
+                if t < datasize:
+                    FP += 1
+                counter += datasize
+                print(counter)
+            else:
+                psi = data_length - t
+                if t < counter:
+                    print(counter)
+                    FN += 1
+                    counter = data_length
+                else:
+                    if abs(psi) <= value:
+                        print(counter)
+                        TP += 1
+                        counter = counter + idx
+                    elif abs(psi) > value and psi > 0:
+                        print(counter)
+                        FP += 1
+                        counter = t
+                    elif abs(psi) > value and psi <= 0:
+                        print(counter)
+                        FN += 1
+                        counter = data_length
+                for i in model_parameters:
+                    fitted_linear_model[i] = np.array([0, 0, 0, 0])
+                    param_idx[i] = 0
             data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
 
     return TP, FN, FP
-
-    # if fitting_origin <= idx < fitting_origin+datasize:
-    #
-    #
-    #
-    #     if idx>=Line_fit_data_size + fitting_origin:
-    #        for i in model_parameters:
-    #            fitted_linear_model[i] = linear_analysis(data.get(i)[0][idx:Line_fit_data_size + idx],
-    #                                                     data.get(i)[1][idx:Line_fit_data_size + idx])
-    #        prediction_origin = fitting_origin + Line_fit_data_size
-    #        t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp, req)
-    #        if (t<0):
-    #            # reset
-    #        else:
-    #            print("predicted violation wrt prediction_oritgin is %d", t-Line_fit_data_size)
