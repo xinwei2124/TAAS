@@ -44,8 +44,7 @@ def polynomial_evaluation_first_root(model_parameters, fitted_linear_model, str,
         return 50000
 
 
-def linear_updating(fitted_linear_model, data, datasize, PMC_result, Epsilon, Updating_N, idx, Line_fit_data_size):
-    model_parameters = PMC_result[1]
+def linear_updating(fitted_linear_model, data, datasize, model_parameters, Epsilon, Updating_N, idx, Line_fit_data_size):
     counter_positive = dict()
     counter_negative = dict()
     fitting_index = dict()
@@ -98,35 +97,73 @@ def new_linear_model(model_parameters, fitted_linear_model, data, new_fitting_or
     idx = int(max(temp_array))
     return param_idx, idx, fitted_linear_model
 
+
+def multi_req_evaluation (model_parameters, fitted_linear_model, pmc_exp, req, data, PMC_result):
+    var = [1, 2, 3]
+    t = []
+    data_length = []
+    decision = []
+    for i in var:
+        t.append(polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp[i], req[i]))
+        data_length.append(system_level_prop_eval(data, req[i], PMC_result[i])[0])
+        decision.append(system_level_prop_eval(data, req[i], PMC_result[i])[1])
+    t = min(t)
+    data_length = min(data_length)
+    if sum(decision)>0:
+        decision = 1
+    else:
+        decision = 0
+    return t, data_length, decision
+
+
 def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_data_size, Epsilon, PMC_result,
                      application_domain, noise_level, req, value, trigger_value):
     TP = 0
     FP = 0
     FN = 0
 
-    counter = 0
-    fitting_origin = 0
-    model_parameters = PMC_result[1]
-    pmc_exp = PMC_result[0]
-    idx = 0
+    pmc_exp = dict()
+    fitted_linear_model = dict()
     param_idx = dict()
 
-    fitted_linear_model = dict()
+    var = [1, 2, 3]
+    model_parameters = set()
+    model_parameter_rwd = set()
+    model_parameter_prob = set()
+    for i in var:
+        pmc_exp[i] = PMC_result[i][0]
+        model_parameter_rwd = model_parameter_rwd.union(PMC_result[i][3])
+        model_parameters = model_parameters.union(PMC_result[i][1])
+        model_parameter_prob = model_parameter_prob.union(PMC_result[i][2])
+
+    counter = 0
+    fitting_origin = 0
+    idx = 0
+
     for i in model_parameters:
         fitted_linear_model[i] = np.array([0, 0, 0, 0])
         param_idx[i] = 0
 
-    data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
-
+    data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
     while counter < RunningPeriod:
-        flag, new_fitting_origin = linear_updating(fitted_linear_model, data, datasize, PMC_result, Epsilon, Updating_N,
+        flag, new_fitting_origin = linear_updating(fitted_linear_model, data, datasize, model_parameters, Epsilon, Updating_N,
                                                    param_idx, Line_fit_data_size)
         if flag == 1:
             param_idx, idx, fitted_linear_model = new_linear_model(model_parameters, fitted_linear_model, data, new_fitting_origin, Line_fit_data_size,
                              param_idx)
-            t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
-                                                 req) + counter - Line_fit_data_size
-            data_length, decision = system_level_prop_eval(data, req, PMC_result)
+            # t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp[2],
+            #                                      req[2]) + counter - Line_fit_data_size
+            # print(PMC_result[1][0])
+            # data_length, decision = system_level_prop_eval(data, req[1], PMC_result[1])
+            # print(PMC_result[2][0])
+            # data_length, decision = system_level_prop_eval(data, req[2], PMC_result[2])
+            t, data_length, decision = multi_req_evaluation(model_parameters, fitted_linear_model, pmc_exp, req, data, PMC_result)
+            t = t + counter
+            data_length = data_length + counter
+
+            # t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
+            #                                      req) + counter - Line_fit_data_size
+            # data_length, decision = system_level_prop_eval(data, req, PMC_result)
             data_length = data_length + counter
 
             if t < counter:
@@ -148,11 +185,10 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
                 for i in model_parameters:
                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
                     param_idx[i] = 0
-                data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
+                data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
         else:
-            t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
-                                                 req) + counter - Line_fit_data_size
-            data_length, decision = system_level_prop_eval(data, req, PMC_result)
+            t, data_length, decision = multi_req_evaluation(model_parameters, fitted_linear_model, pmc_exp, req, data, PMC_result)
+            t = t + counter
             data_length = data_length + counter
             if decision == 0:
                 if t < datasize:
@@ -181,6 +217,93 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
                 for i in model_parameters:
                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
                     param_idx[i] = 0
-            data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
+            data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
 
     return TP, FN, FP
+
+# def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_data_size, Epsilon, PMC_result,
+#                      application_domain, noise_level, req, value, trigger_value):
+#     TP = 0
+#     FP = 0
+#     FN = 0
+#
+#     counter = 0
+#     fitting_origin = 0
+#     model_parameters = PMC_result[1]
+#     pmc_exp = PMC_result[0]
+#     idx = 0
+#     param_idx = dict()
+#
+#     fitted_linear_model = dict()
+#     for i in model_parameters:
+#         fitted_linear_model[i] = np.array([0, 0, 0, 0])
+#         param_idx[i] = 0
+#
+#     data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
+#
+#     while counter < RunningPeriod:
+#         flag, new_fitting_origin = linear_updating(fitted_linear_model, data, datasize, PMC_result, Epsilon, Updating_N,
+#                                                    param_idx, Line_fit_data_size)
+#         if flag == 1:
+#             param_idx, idx, fitted_linear_model = new_linear_model(model_parameters, fitted_linear_model, data, new_fitting_origin, Line_fit_data_size,
+#                              param_idx)
+#             t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
+#                                                  req) + counter - Line_fit_data_size
+#             data_length, decision = system_level_prop_eval(data, req, PMC_result)
+#             data_length = data_length + counter
+#
+#             if t < counter:
+#                 print(counter)
+#                 FN += 1
+#                 counter = data_length
+#             elif t - idx - counter < trigger_value:
+#                 print(counter)
+#                 psi = data_length - t
+#                 if abs(psi) <= value:
+#                     TP += 1
+#                     counter = counter + idx
+#                 elif abs(psi) > value and psi > 0:
+#                     FP += 1
+#                     counter = t
+#                 elif abs(psi) > value and psi <= 0:
+#                     FN += 1
+#                     counter = data_length
+#                 for i in model_parameters:
+#                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
+#                     param_idx[i] = 0
+#                 data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
+#         else:
+#             t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
+#                                                  req) + counter - Line_fit_data_size
+#             data_length, decision = system_level_prop_eval(data, req, PMC_result)
+#             data_length = data_length + counter
+#             if decision == 0:
+#                 if t < datasize:
+#                     FP += 1
+#                 counter += datasize
+#                 print(counter)
+#             else:
+#                 psi = data_length - t
+#                 if t < counter:
+#                     print(counter)
+#                     FN += 1
+#                     counter = data_length
+#                 else:
+#                     if abs(psi) <= value:
+#                         print(counter)
+#                         TP += 1
+#                         counter = counter + idx
+#                     elif abs(psi) > value and psi > 0:
+#                         print(counter)
+#                         FP += 1
+#                         counter = t
+#                     elif abs(psi) > value and psi <= 0:
+#                         print(counter)
+#                         FN += 1
+#                         counter = data_length
+#                 for i in model_parameters:
+#                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
+#                     param_idx[i] = 0
+#             data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
+#
+#     return TP, FN, FP
