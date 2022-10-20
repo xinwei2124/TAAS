@@ -118,10 +118,37 @@ def lower_bound(x, l):
             return i
 
 
+def system_level_eval_multiple(req, data, PMC_result):
+    var = [1, 2, 3]
+    data_length = []
+    decision = []
+    for i in var:
+        data_length.append(system_level_prop_eval(data, req[i], PMC_result[i])[0])
+        decision.append(system_level_prop_eval(data, req[i], PMC_result[i])[1])
+    data_length = min(data_length)
+    if sum(decision)>0:
+        decision = 1
+    else:
+        decision = 0
+    return data_length, decision
+
+
 def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, application_domain, noise_level, req):
     maintenance_interval = int(RunningPeriod / (number_of_maintenance + 1))
     maintenance_idx_list = [0]
     no_service_flag = 0
+
+    var = [1, 2, 3]
+    pmc_exp = dict()
+    model_parameters = set()
+    model_parameter_rwd = set()
+    model_parameter_prob = set()
+    for i in var:
+        pmc_exp[i] = PMC_result[i][0]
+        model_parameter_rwd = model_parameter_rwd.union(PMC_result[i][3])
+        model_parameters = model_parameters.union(PMC_result[i][1])
+        model_parameter_prob = model_parameter_prob.union(PMC_result[i][2])
+
     if number_of_maintenance >= 1:
         for i in range(1, number_of_maintenance + 1):
             maintenance_idx_list.append(maintenance_interval * i)
@@ -131,24 +158,27 @@ def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, applica
     counter = 0
     number_of_violation = 0
     while counter < RunningPeriod:
-        data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
+        data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
+        # data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
         current_bound_idx = lower_bound(counter, maintenance_idx_list)
 
         if no_service_flag == 0 and counter + datasize > maintenance_idx_list[current_bound_idx]:
             data_before_fixed_service = maintenance_idx_list[current_bound_idx] - counter + 1
             resized_data = data_resize(data, data_before_fixed_service)
-            data_length, decision = system_level_prop_eval(resized_data, req,
-                                                           PMC_result)
+            data_length, decision = system_level_eval_multiple(req, data, PMC_result)
+            # data_length, decision = system_level_prop_eval(resized_data, req,PMC_result)
             if decision == 0:
                 counter = counter + data_length
             else:
                 counter = counter + data_length
                 number_of_violation += 1
         else:
-            data_length, decision = system_level_prop_eval(data, req, PMC_result)
+            # data_length, decision = system_level_prop_eval(data, req, PMC_result)
+            data_length, decision = system_level_eval_multiple(req, data, PMC_result)
             if decision == 0:
                 counter = counter + data_length
             else:
                 counter = counter + data_length
                 number_of_violation += 1
     return number_of_violation
+

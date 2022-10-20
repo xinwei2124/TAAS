@@ -100,10 +100,10 @@ def new_data(type, noise, default_trend, data_size, max_value, min_value, counte
     a = diff_value(min_value, max_value)
     if noise == 1:
         np.random.seed(int(counter / 100 + 2))
-        y_reading = y_reading + np.random.normal(0, a * 0.25, y_reading.shape)
+        y_reading = y_reading + np.random.normal(0, a * 0.15, y_reading.shape)
     elif noise == 2:
         np.random.seed(int(counter / 100 + 3))
-        y_reading = y_reading + np.random.normal(0, a * 0.5, y_reading.shape)
+        y_reading = y_reading + np.random.normal(0, a * 0.3, y_reading.shape)
     elif noise == 3:
         np.random.seed(int(counter / 100 + 4))
         y_reading = y_reading + np.random.normal(0, a * 0.75, y_reading.shape)
@@ -113,6 +113,7 @@ def new_data(type, noise, default_trend, data_size, max_value, min_value, counte
 
     # plt.figure()
     # plt.plot(x_generating, y_reading)
+    # plt.plot(x_generating, y_reading_ref)
     # np.savetxt("/Users/xinweifang/Desktop/y1.csv", y_reading, delimiter=",", fmt='%0.6f')
     return x_generating, y_reading, y_reading_ref
 

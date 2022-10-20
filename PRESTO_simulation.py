@@ -55,19 +55,23 @@ def linear_updating(fitted_linear_model, data, datasize, model_parameters, Epsil
         fitting_index[i] = 0
 
     for i in model_parameters:
+        a = max(data.get(i)[2])
+        b = min(data.get(i)[2])
+        value_diff = diff_value(a,b)
         for data_sample in range(idx[i], datasize):
             x = data.get(i)[0][data_sample]
             y = data.get(i)[1][data_sample]
+
 
             if fitted_linear_model[i].ndim < 2:
                 linear_result = fitted_linear_model[i][0] * x + fitted_linear_model[i][1]
             else:
                 linear_result = fitted_linear_model[i][-1][0] * x + fitted_linear_model[i][-1][1]
 
-            if y > linear_result:
+            if y > linear_result - value_diff*Epsilon:
                 counter_positive[i] = counter_positive[i] + 1
                 counter_negative[i] = 0
-            if y < linear_result:
+            if y < linear_result + value_diff*Epsilon:
                 counter_negative[i] = counter_negative[i] + 1
                 counter_positive[i] = 0
             if y == linear_result:
@@ -89,9 +93,10 @@ def new_linear_model(model_parameters, fitted_linear_model, data, new_fitting_or
     temp_array = np.array(0)
 
     for i in model_parameters:
-        fitted_linear_model[i] = linear_analysis(
-            data.get(i)[0][new_fitting_origin[i]:new_fitting_origin[i] + Line_fit_data_size],
-            data.get(i)[1][new_fitting_origin[i]:new_fitting_origin[i] + Line_fit_data_size])
+        if new_fitting_origin[i] >=0:
+            fitted_linear_model[i] = linear_analysis(
+                data.get(i)[0][new_fitting_origin[i]:new_fitting_origin[i] + Line_fit_data_size],
+                data.get(i)[1][new_fitting_origin[i]:new_fitting_origin[i] + Line_fit_data_size])
         temp_array = np.append(temp_array, new_fitting_origin[i] + Line_fit_data_size)
         param_idx[i] = new_fitting_origin[i] + Line_fit_data_size
     idx = int(max(temp_array))
@@ -104,10 +109,15 @@ def multi_req_evaluation (model_parameters, fitted_linear_model, pmc_exp, req, d
     data_length = []
     decision = []
     for i in var:
-        t.append(polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp[i], req[i]))
+        temp= polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp[i], req[i])
+        if (temp > 0):
+            t.append(temp)
         data_length.append(system_level_prop_eval(data, req[i], PMC_result[i])[0])
         decision.append(system_level_prop_eval(data, req[i], PMC_result[i])[1])
-    t = min(t)
+    if not t:
+        t = 500000
+    else:
+        t = min(t)
     data_length = min(data_length)
     if sum(decision)>0:
         decision = 1
@@ -139,15 +149,29 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
     counter = 0
     fitting_origin = 0
     idx = 0
-
+    loop_counter = 0
     for i in model_parameters:
         fitted_linear_model[i] = np.array([0, 0, 0, 0])
         param_idx[i] = 0
 
     data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
     while counter < RunningPeriod:
+        t, data_length, decision = multi_req_evaluation(model_parameters, fitted_linear_model, pmc_exp, req, data,
+                                                        PMC_result)
         flag, new_fitting_origin = linear_updating(fitted_linear_model, data, datasize, model_parameters, Epsilon, Updating_N,
                                                    param_idx, Line_fit_data_size)
+        temp = []
+        for i in new_fitting_origin:
+            temp.append(new_fitting_origin[i])
+        min_val=0
+        for i in temp:
+            if min_val < i < data_length:
+                min_val = i
+
+        for i in new_fitting_origin:
+            if new_fitting_origin[i] >= data_length:
+                new_fitting_origin[i] = min_val
+
         if flag == 1:
             param_idx, idx, fitted_linear_model = new_linear_model(model_parameters, fitted_linear_model, data, new_fitting_origin, Line_fit_data_size,
                              param_idx)
@@ -164,13 +188,15 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
             # t = polynomial_evaluation_first_root(model_parameters, fitted_linear_model, pmc_exp,
             #                                      req) + counter - Line_fit_data_size
             # data_length, decision = system_level_prop_eval(data, req, PMC_result)
-            data_length = data_length + counter
-
-            if t < counter:
+            # if t < counter or all(value == 0 for value in new_fitting_origin.values()):
+            if t < counter or data_length < loop_counter:
                 print(counter)
                 FN += 1
                 counter = data_length
-            elif t - idx - counter < trigger_value:
+                data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain,
+                                                noise_level, counter)
+                loop_counter = 0
+            elif t - idx - loop_counter - counter < trigger_value:
                 print(counter)
                 psi = data_length - t
                 if abs(psi) <= value:
@@ -186,6 +212,7 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
                     param_idx[i] = 0
                 data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
+                loop_counter = 0
         else:
             t, data_length, decision = multi_req_evaluation(model_parameters, fitted_linear_model, pmc_exp, req, data, PMC_result)
             t = t + counter
@@ -205,7 +232,7 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
                     if abs(psi) <= value:
                         print(counter)
                         TP += 1
-                        counter = counter + idx
+                        counter = t - trigger_value
                     elif abs(psi) > value and psi > 0:
                         print(counter)
                         FP += 1
@@ -218,7 +245,8 @@ def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_dat
                     fitted_linear_model[i] = np.array([0, 0, 0, 0])
                     param_idx[i] = 0
             data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
-
+            loop_counter = 0
+        loop_counter += idx
     return TP, FN, FP
 
 # def PRESTOSimulation(RunningPeriod, prediction_horizon, Updating_N, Line_fit_data_size, Epsilon, PMC_result,
