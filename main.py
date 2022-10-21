@@ -42,9 +42,7 @@ if __name__ == '__main__':
         requirement[i] = eval(f"R{i}")
 
 
-    # TP, FN, FP = PRESTOSimulation(43200, prediction_horizon, Updating_N, Line_fit_data_size, Epsilon, pmc_result,
-    #                               application, noise, requirement, psi_threshold, trigger_value)
-    # print(TP, FN, FP)
+
 
 
 
@@ -56,7 +54,11 @@ if __name__ == '__main__':
         print(n)
         for repeat in range(0, number_of_runs):
             print(repeat)
+            # TP, FN, FP = PRESTOSimulation(43200, prediction_horizon, Updating_N, Line_fit_data_size, Epsilon,
+            #                               pmc_result,
+            #                               application, noise, requirement, psi_threshold, trigger_value)
+            # print(TP, FN, FP)
             Matrix[n][repeat] = BaselineSimulation(43200, n, pmc_result, application, noise, requirement)
-
-    print(Matrix)
+            TP, FN, FP, service = PRESTOSimulation(43200, n, pmc_result, application, noise, requirement, Epsilon, Updating_N, Line_fit_data_size, psi_threshold, trigger_value)
+    print(Matrix, TP, FN, FP, service)
     a = np.asarray(Matrix)
