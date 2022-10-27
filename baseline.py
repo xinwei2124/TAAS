@@ -133,7 +133,7 @@ def system_level_eval_multiple(req, data, PMC_result):
     return data_length, decision
 
 
-def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, application_domain, noise_level, req):
+def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, application_domain, noise_level, req, Random_seed_idx):
     maintenance_interval = int(RunningPeriod / (number_of_maintenance + 1))
     maintenance_idx_list = [0]
     no_service_flag = 0
@@ -158,8 +158,8 @@ def BaselineSimulation(RunningPeriod, number_of_maintenance, PMC_result, applica
     counter = 0
     number_of_violation = 0
     while counter < RunningPeriod:
-        print(counter)
-        data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
+        # print(counter)
+        data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, Random_seed_idx+counter)
         # data, datasize = data_generator(PMC_result[2], PMC_result[3], application_domain, noise_level, counter)
         current_bound_idx = lower_bound(counter, maintenance_idx_list)
 

@@ -170,9 +170,9 @@ def PRESTO(model_parameters, fitted_linear_model, pmc_exp, req, data, PMC_result
             t, ref_t, decision = multi_req_evaluation(model_parameters, fitted_linear_model, pmc_exp, req, data,
                                                       PMC_result)
             return t, ref_t, decision, idx
+    return t, ref_t, decision, idx
 
-
-def PRESTOSimulation(RunningPeriod, number_of_maintenance, PMC_result, application_domain, noise_level, req, Epsilon, Updating_N, Line_fit_data_size, value, trigger_value):
+def PRESTOSimulation(RunningPeriod, number_of_maintenance, PMC_result, application_domain, noise_level, req, Epsilon, Updating_N, Line_fit_data_size, value, trigger_value,Random_seed_idx):
 
     TP =0
     FP = 0
@@ -213,9 +213,9 @@ def PRESTOSimulation(RunningPeriod, number_of_maintenance, PMC_result, applicati
     tempx=0
     while counter < RunningPeriod:
         tempx+=1
-        print(counter)
+        # print(counter)
         if data_reset_flag == 1:
-            data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, counter)
+            data, datasize = data_generator(model_parameter_prob, model_parameter_rwd, application_domain, noise_level, Random_seed_idx+counter)
         current_bound_idx = lower_bound(counter, maintenance_idx_list)
 
         if no_service_flag == 0 and counter + datasize > maintenance_idx_list[current_bound_idx]:
