@@ -5,6 +5,6 @@
   2)Stormpy is required to run the PRESTO simulator, which can be downloaded from (https://github.com/rustychris/stompy)
   
 ## TO do
-To add models and properties files
+The pDTMC models and properties for both case studies in the folder - 
 To include all experimental data
 To upload the result for varying epsilon
