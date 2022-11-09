@@ -13,7 +13,8 @@ The results used to answer the research questions 1,2 and 3 are avialble in the 
 
 ## Results for varying epsilon (Fruit-picking application)
 
-      ![alt text](https://user-images.githubusercontent.com/62383976/200804031-ef1d9aa4-0de6-4482-ae22-75a95acaf9d5.png?raw=true)
+![alt text](https://user-images.githubusercontent.com/62383976/200804031-ef1d9aa4-0de6-4482-ae22-75a95acaf9d5.png?raw=true)
+
 ![alt text](https://github.com/xinwei2124/TAAS/files/9969867/Ep1_dist.pdf?raw=true)
 ![alt text](https://github.com/xinwei2124/TAAS/files/9969877/Ep1_cost.pdf?raw=true)
 
