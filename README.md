@@ -30,7 +30,25 @@ The results used to answer the research questions 1,2 and 3 are avialble in the 
 
 
 ![alt text](https://github.com/xinwei2124/TAAS/files/9970198/Ep1_dist.pdf?raw=true)
-![alt text](https://github.com/xinwei2124/TAAS/files/9970197/Ep1_cost.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/9970253/Ep1_cost.pdf?raw=true)
+
+![alt text](https://github.com/xinwei2124/TAAS/files/9970256/Ep2_dist.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/9970255/Ep2_cost.pdf?raw=true)
+
+![alt text](https://github.com/xinwei2124/TAAS/files/9970258/Ep3_dist.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/9970257/Ep3_cost.pdf?raw=true)
+
+
+[Ep1_cost.pdf](https://github.com/xinwei2124/TAAS/files/9970253/Ep1_cost.pdf)
+[Ep1_dis.pdf](https://github.com/xinwei2124/TAAS/files/9970254/Ep1_dis.pdf)
+[Ep2_cost.pdf](https://github.com/xinwei2124/TAAS/files/9970255/Ep2_cost.pdf)
+[Ep2_dis.pdf](https://github.com/xinwei2124/TAAS/files/9970256/Ep2_dis.pdf)
+[Ep3_cost.pdf](https://github.com/xinwei2124/TAAS/files/9970257/Ep3_cost.pdf)
+[Ep3_dis.pdf](https://github.com/xinwei2124/TAAS/files/9970258/Ep3_dis.pdf)
+
+
+
+
 
 
 
