@@ -13,5 +13,6 @@ The results used to answer the research questions 1,2 and 3 are avialble in the 
 
 To include all experimental data
 To upload the result for varying epsilon
+![alt text](https://github.com/xinwei2124/TAAS/files/9969614/Ep1_cost.pdf?raw=true)
 [Ep1_cost.pdf](https://github.com/xinwei2124/TAAS/files/9969614/Ep1_cost.pdf)[Ep1_dist.pdf](https://github.com/xinwei2124/TAAS/files/9969615/Ep1_dist.pdf)
 
