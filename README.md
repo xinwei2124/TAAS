@@ -32,8 +32,8 @@ The results used to answer the research questions 1,2 and 3 are avialble in the 
 ![alt text](https://github.com/xinwei2124/TAAS/files/9970290/Ep1_dis.pdf?raw=true)
 ![alt text](https://github.com/xinwei2124/TAAS/files/9970253/Ep1_cost.pdf?raw=true)
 
-![alt text](https://github.com/xinwei2124/TAAS/files/9970290/Ep1_dis.pdf?raw=true)
-![alt text](https://github.com/xinwei2124/TAAS/files/9970253/Ep1_cost.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/9970304/Ep2_dis.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/9970303/Ep2_cost.pdf?raw=true)
 
 
 
