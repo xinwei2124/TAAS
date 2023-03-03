@@ -26,22 +26,16 @@ The results used to answer the research questions 1,2 and 3 are avialble in the 
 
 ## Results for varying epsilon (RAD application)
 
-![alt text](https://user-images.githubusercontent.com/62383976/200808802-4f738eec-8727-4258-80a9-174c5e481447.png?raw=true)
 
+![alt text](https://user-images.githubusercontent.com/62383976/222683127-ce0f9561-13ec-4504-b2ac-efe4bbc50665.png?raw=true)
 
-![alt text](https://github.com/xinwei2124/TAAS/files/9970290/Ep1_dis.pdf?raw=true)
-![alt text](https://github.com/xinwei2124/TAAS/files/9970253/Ep1_cost.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/10880544/RAD_E1_dis.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/10880546/RAD_E1_cost.pdf?raw=true)
 
-![alt text](https://github.com/xinwei2124/TAAS/files/9970304/Ep2_dis.pdf?raw=true)
-![alt text](https://github.com/xinwei2124/TAAS/files/9970303/Ep2_cost.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/10880588/RAD_E2_dis.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/10880587/RAD_E2_cost.pdf?raw=true)
 
-![alt text](https://github.com/xinwei2124/TAAS/files/9970318/Ep3_dis.pdf?raw=true)
-![alt text](https://github.com/xinwei2124/TAAS/files/9970317/Ep3_cost.pdf?raw=true)
-
-
-
-
-
-
+![alt text](https://github.com/xinwei2124/TAAS/files/10880590/RAD_E3_dis.pdf?raw=true)
+![alt text](https://github.com/xinwei2124/TAAS/files/10880589/RAD_E3_cost.pdf?raw=true)
 
 
